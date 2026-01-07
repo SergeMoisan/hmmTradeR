@@ -1,0 +1,25 @@
+CC = /opt/intel/oneapi/compiler/latest/bin/icx
+CXX = /opt/intel/oneapi/compiler/latest/bin/icpx
+FC = /opt/intel/oneapi/compiler/latest/bin/ifx
+F77 = /opt/intel/oneapi/compiler/latest/bin/ifx
+CXX11 = /opt/intel/oneapi/compiler/latest/bin/icpx
+CXX14 = /opt/intel/oneapi/compiler/latest/bin/icpx
+CXX17 = /opt/intel/oneapi/compiler/latest/bin/icpx
+CXX20 = /opt/intel/oneapi/compiler/latest/bin/icpx
+
+
+CFLAGS = -O3 -xHost -fPIC
+CXXFLAGS = -O3 -xHost -fPIC
+FCFLAGS = -O3 -xHost -fPIC
+
+# OpenMP flags (icx/icpx support -fopenmp and recommend -qopenmp in some contexts)
+#SHLIB_OPENMP_CFLAGS = -qopenmp -qopt-report # pour icx
+SHLIB_OPENMP_CFLAGS = -Wopenmp
+SHLIB_OPENMP_CXXFLAGS = -qopenmp
+SHLIB_OPENMP_FCFLAGS = -qopenmp
+
+# Options additionnelles (à activer avec précautions)
+#CFLAGS += -ffast-math            # accélère calculs flottants, peut altérer précision
+#CXXFLAGS += -ffast-math
+##CXXFLAGS += -inline-forceinline -ipo   # if supported; voir documentation icx pour IPO/LTO
+#FCFLAGS += -ffast-math
