@@ -1,16 +1,28 @@
 Package: hmmTradeR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: hmm models tools for trading
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "Serge", "Moisan",
+      email = "serge.moisan@yahoo.fr",
       role = c("aut", "cre")
     )
   )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
-License: What license is it under?
+Description: This package proposes different tools,
+    written in C++ (for speed)and R to test different parameters 
+    for hmm model of stock prices. It generates signals for backtesting and
+    evaluation of the different models.
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
+LinkingTo: 
+    cpp11,
+    RcppArmadillo,
+    Rcpp
+Imports: 
+    Rcpp,
+    RcppArmadillo
+Suggests: 
+    decor
+RoxygenNote: 7.3.3
