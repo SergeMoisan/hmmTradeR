@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calculate_rolling_support_resistance_fast
-DataFrame calculate_rolling_support_resistance_fast(CharacterVector dates, NumericVector opens, NumericVector highs, NumericVector lows, NumericVector closes, NumericVector volumes, int window_size, int width);
-RcppExport SEXP _hmmTradeR_calculate_rolling_support_resistance_fast(SEXP datesSEXP, SEXP opensSEXP, SEXP highsSEXP, SEXP lowsSEXP, SEXP closesSEXP, SEXP volumesSEXP, SEXP window_sizeSEXP, SEXP widthSEXP) {
+DataFrame calculate_rolling_support_resistance_fast(CharacterVector dates, NumericVector opens, NumericVector highs, NumericVector lows, NumericVector closes, NumericVector volumes, NumericVector adjusted, int window_size, int width);
+RcppExport SEXP _hmmTradeR_calculate_rolling_support_resistance_fast(SEXP datesSEXP, SEXP opensSEXP, SEXP highsSEXP, SEXP lowsSEXP, SEXP closesSEXP, SEXP volumesSEXP, SEXP adjustedSEXP, SEXP window_sizeSEXP, SEXP widthSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,38 +23,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type lows(lowsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type closes(closesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type volumes(volumesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type adjusted(adjustedSEXP);
     Rcpp::traits::input_parameter< int >::type window_size(window_sizeSEXP);
     Rcpp::traits::input_parameter< int >::type width(widthSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculate_rolling_support_resistance_fast(dates, opens, highs, lows, closes, volumes, window_size, width));
-    return rcpp_result_gen;
-END_RCPP
-}
-// walk_forward_hmm_cpp
-List walk_forward_hmm_cpp(const arma::mat& X_all, int nstates, int n_bull, int n_bear, std::string mode_select, double percentile_cut, int seed, int training_frequency, int initial_multiplier, int maxit, double tol, bool verbose);
-RcppExport SEXP _hmmTradeR_walk_forward_hmm_cpp(SEXP X_allSEXP, SEXP nstatesSEXP, SEXP n_bullSEXP, SEXP n_bearSEXP, SEXP mode_selectSEXP, SEXP percentile_cutSEXP, SEXP seedSEXP, SEXP training_frequencySEXP, SEXP initial_multiplierSEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP verboseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type X_all(X_allSEXP);
-    Rcpp::traits::input_parameter< int >::type nstates(nstatesSEXP);
-    Rcpp::traits::input_parameter< int >::type n_bull(n_bullSEXP);
-    Rcpp::traits::input_parameter< int >::type n_bear(n_bearSEXP);
-    Rcpp::traits::input_parameter< std::string >::type mode_select(mode_selectSEXP);
-    Rcpp::traits::input_parameter< double >::type percentile_cut(percentile_cutSEXP);
-    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
-    Rcpp::traits::input_parameter< int >::type training_frequency(training_frequencySEXP);
-    Rcpp::traits::input_parameter< int >::type initial_multiplier(initial_multiplierSEXP);
-    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
-    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
-    rcpp_result_gen = Rcpp::wrap(walk_forward_hmm_cpp(X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose));
+    rcpp_result_gen = Rcpp::wrap(calculate_rolling_support_resistance_fast(dates, opens, highs, lows, closes, volumes, adjusted, window_size, width));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 8},
-    {"_hmmTradeR_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_walk_forward_hmm_cpp, 12},
+    {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 9},
     {NULL, NULL, 0}
 };
 
