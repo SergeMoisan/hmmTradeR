@@ -3,6 +3,6 @@
 
 #' @export
 walk_forward_hmm_cpp <- function(X_all, nstates = 2L, n_bull = 1L, n_bear = 1L, mode_select = "mean", percentile_cut = 0.2, seed = 123L, training_frequency = 21L, initial_multiplier = 3L, maxit = 200L, tol = 1e-6, verbose = TRUE) {
-    .Call('_hmmTradeR_walk_forward_hmm_cpp', PACKAGE = 'hmmTradeR', X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
+    .Call(`_hmmTradeR_walk_forward_hmm_cpp`, X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
 }
 
