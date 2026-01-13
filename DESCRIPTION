@@ -22,7 +22,8 @@ LinkingTo:
     Rcpp
 Imports: 
     Rcpp,
-    RcppArmadillo
+    RcppArmadillo,
+    zoo
 Suggests: 
     decor
 RoxygenNote: 7.3.3
