@@ -4,7 +4,7 @@
 #include <deque>
 
 using namespace Rcpp;
-
+//' @export
 // [[Rcpp::export]]
 DataFrame calculate_rolling_support_resistance_fast(CharacterVector dates,
                                                     NumericVector opens,

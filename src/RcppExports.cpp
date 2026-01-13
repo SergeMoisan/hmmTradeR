@@ -30,9 +30,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// walk_forward_hmm_cpp
+List walk_forward_hmm_cpp(const arma::mat& X_all, int nstates, int n_bull, int n_bear, std::string mode_select, double percentile_cut, int seed, int training_frequency, int initial_multiplier, int maxit, double tol, bool verbose);
+RcppExport SEXP _hmmTradeR_walk_forward_hmm_cpp(SEXP X_allSEXP, SEXP nstatesSEXP, SEXP n_bullSEXP, SEXP n_bearSEXP, SEXP mode_selectSEXP, SEXP percentile_cutSEXP, SEXP seedSEXP, SEXP training_frequencySEXP, SEXP initial_multiplierSEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_all(X_allSEXP);
+    Rcpp::traits::input_parameter< int >::type nstates(nstatesSEXP);
+    Rcpp::traits::input_parameter< int >::type n_bull(n_bullSEXP);
+    Rcpp::traits::input_parameter< int >::type n_bear(n_bearSEXP);
+    Rcpp::traits::input_parameter< std::string >::type mode_select(mode_selectSEXP);
+    Rcpp::traits::input_parameter< double >::type percentile_cut(percentile_cutSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< int >::type training_frequency(training_frequencySEXP);
+    Rcpp::traits::input_parameter< int >::type initial_multiplier(initial_multiplierSEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(walk_forward_hmm_cpp(X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 9},
+    {"_hmmTradeR_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_walk_forward_hmm_cpp, 12},
     {NULL, NULL, 0}
 };
 
