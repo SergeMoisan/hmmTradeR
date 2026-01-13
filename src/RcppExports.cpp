@@ -11,6 +11,25 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// calculate_rolling_support_resistance_fast
+DataFrame calculate_rolling_support_resistance_fast(CharacterVector dates, NumericVector opens, NumericVector highs, NumericVector lows, NumericVector closes, NumericVector volumes, NumericVector adjusted, int window_size, int width);
+RcppExport SEXP _hmmTradeR_calculate_rolling_support_resistance_fast(SEXP datesSEXP, SEXP opensSEXP, SEXP highsSEXP, SEXP lowsSEXP, SEXP closesSEXP, SEXP volumesSEXP, SEXP adjustedSEXP, SEXP window_sizeSEXP, SEXP widthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type dates(datesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type opens(opensSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type highs(highsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type lows(lowsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type closes(closesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type volumes(volumesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type adjusted(adjustedSEXP);
+    Rcpp::traits::input_parameter< int >::type window_size(window_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type width(widthSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculate_rolling_support_resistance_fast(dates, opens, highs, lows, closes, volumes, adjusted, window_size, width));
+    return rcpp_result_gen;
+END_RCPP
+}
 // walk_forward_hmm_cpp
 List walk_forward_hmm_cpp(const arma::mat& X_all, int nstates, int n_bull, int n_bear, std::string mode_select, double percentile_cut, int seed, int training_frequency, int initial_multiplier, int maxit, double tol, bool verbose);
 RcppExport SEXP _hmmTradeR_walk_forward_hmm_cpp(SEXP X_allSEXP, SEXP nstatesSEXP, SEXP n_bullSEXP, SEXP n_bearSEXP, SEXP mode_selectSEXP, SEXP percentile_cutSEXP, SEXP seedSEXP, SEXP training_frequencySEXP, SEXP initial_multiplierSEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP verboseSEXP) {
@@ -35,6 +54,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 9},
     {"_hmmTradeR_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_walk_forward_hmm_cpp, 12},
     {NULL, NULL, 0}
 };
