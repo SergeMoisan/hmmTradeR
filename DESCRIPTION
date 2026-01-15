@@ -25,5 +25,7 @@ Imports:
     RcppArmadillo,
     zoo
 Suggests: 
-    decor
+    decor,
+    roxygen2,
+    devtools
 RoxygenNote: 7.3.3
