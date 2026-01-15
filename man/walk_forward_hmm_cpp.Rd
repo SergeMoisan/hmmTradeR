@@ -51,10 +51,10 @@ Default: 3.}
 }
 \value{
 A named list with elements:
-  \item{signals}{integer vector length T (-1: bear, 0: neutral, 1: bull)}\n'
-  \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}\n'
+  \item{signals}{integer vector length T (-1: bear, 0: neutral, 1: bull)}'
+  \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}'
   \item{diagnostics}{list of per-task diagnostics; each element contains state_means, state_sds,
-        bull_states, bear_states, train_end, predict_end, oos_counts}\n'
+        bull_states, bear_states, train_end, predict_end, oos_counts}'
 }
 \description{
 Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
