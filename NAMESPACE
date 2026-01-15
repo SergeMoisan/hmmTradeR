@@ -3,4 +3,5 @@
 export(calculate_rolling_support_resistance_fast)
 export(walk_forward_hmm_cpp)
 importFrom(Rcpp,evalCpp)
+importFrom(Rcpp,sourceCpp)
 useDynLib(hmmTradeR, .registration = TRUE)
