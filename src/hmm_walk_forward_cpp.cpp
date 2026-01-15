@@ -452,9 +452,9 @@ List walk_forward_hmm_cpp(const arma::mat &X_all,
     iota(ord_states.begin(), ord_states.end(), 1); // 1..K
     std::sort(ord_states.begin(), ord_states.end(), [&](int a, int b){
       double sa = score(a-1), sb = score(b-1);
-      if (arma::is_finite(sa) && arma::is_finite(sb)) return sa > sb;
-      if (arma::is_finite(sa) && !arma::is_finite(sb)) return true;
-      if (!arma::is_finite(sa) && arma::is_finite(sb)) return false;
+      if (std::isfinite(sa) && std::isfinite(sb)) return sa > sb;
+      if (std::isfinite(sa) && !std::isfinite(sb)) return true;
+      if (!std::isfinite(sa) && std::isfinite(sb)) return false;
       return a < b;
     });
 
@@ -501,7 +501,7 @@ List walk_forward_hmm_cpp(const arma::mat &X_all,
       vec valid_means;
       std::vector<int> valid_idx;
       for (int k=0;k<nstates;k++) {
-        if (arma::is_finite(state_means(k))) {
+        if (std::isfinite(state_means(k))) {
           valid_means.insert_rows(valid_means.n_rows, state_means.subvec(k,k));
           valid_idx.push_back(k+1);
         }
