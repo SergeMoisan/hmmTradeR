@@ -2,8 +2,57 @@
 // [[Rcpp::depends(Rcpp)]]
 #include <Rcpp.h>
 #include <deque>
-
 using namespace Rcpp;
+//' Calcul rapide des niveaux de support et résistance roulants
+//'
+//' Calcule pour chaque pas de temps un niveau de support et de résistance « centré »
+//' sur une petite fenêtre (paramètre `width`) au sein d'une fenêtre historique plus large
+//' (paramètre `window_size`). La fonction recherche, pour chaque fin de fenêtre historique,
+//' le point central d'une petite fenêtre qui correspond au minimum (support) ou au maximum
+//' (résistance) de cette petite fenêtre. Les calculs sont optimisés avec des déques pour
+//' le sliding min/max.
+//'
+//' Les vecteurs d'entrée doivent être de même longueur. Les NA dans `adjusted` sont traités
+//' en évitant les comparaisons ; si la valeur du min/max est NA, le résultat pour cette
+//' petite fenêtre sera NA.
+//'
+//' @param dates CharacterVector : vecteur de dates/horodatages (sous forme de chaîne).
+//' @param opens NumericVector : prix d'ouverture.
+//' @param highs NumericVector : prix haut.
+//' @param lows NumericVector : prix bas.
+//' @param closes NumericVector : prix de clôture.
+//' @param volumes NumericVector : volumes.
+//' @param adjusted NumericVector : prix ajustés utilisés pour détecter min/max (typiquement close ou adjusted).
+//' @param window_size integer (par défaut 100) : taille de la fenêtre historique (nombre de barres) utilisée pour calculer un support/résistance à chaque pas.
+//' @param width integer (par défaut 20) : largeur de la petite fenêtre sur laquelle on calcule le min/max centré (doit être >= 1 et <= longueur de la série).
+//'
+//' @return DataFrame contenant les colonnes : Date, Open, High, Low, Close, Volume, Adjusted, Support, Resistance.
+//'         Support/Resistance contiennent la valeur du niveau trouvé pour la date correspondante (ou NA si introuvable).
+//'
+//' @details
+//' - Exécution : la fonction est conçue pour être appelée depuis R après compilation du package.
+//' - Tolérance : une petite tolérance numérique (1e-12) est utilisée pour comparer égalité center == min/max.
+//' - Complexité : la recherche du sliding min/max est linéaire grâce aux déques ; la boucle principale parcourt les étapes historiques.
+//'
+//' @examples
+//' \dontrun{
+//' # Exemple R (après compilation et installation du package)
+//' # supposez que le package s'appelle "YOURPKGNAME" et que la fonction est disponible.
+//' library(YOURPKGNAME) # remplacer par le nom réel du package
+//' # données fictives
+//' dates <- as.character(Sys.Date() - 9:0)
+//' n <- length(dates)
+//' opens <- runif(n, 99, 101)
+//' highs <- opens + runif(n, 0, 2)
+//' lows  <- opens - runif(n, 0, 2)
+//' closes <- (highs + lows) / 2
+//' volumes <- sample(100:1000, n, replace = TRUE)
+//' adjusted <- closes
+//' # appel
+//' res <- calculate_rolling_support_resistance_fast(dates, opens, highs, lows, closes, volumes, adjusted, window_size = 5, width = 3)
+//' head(res)
+//' }
+//'
 //' @export
 // [[Rcpp::export]]
 DataFrame calculate_rolling_support_resistance_fast(CharacterVector dates,
