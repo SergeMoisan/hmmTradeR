@@ -14,8 +14,8 @@ FCFLAGS = -O3 -xHost -fPIC
 
 PKG_CPPFLAGS += -DARMA_USE_CURRENT
 CXX_STD = CXX17           # ou CXX11/CXX17 selon votre besoin ; R recommande CXX14/CXX17 aujourd'hui
-PKG_CXXFLAGS += -O3 -march=native -mtune=native # -fopenmp
-# PKG_LIBS += -fopenmp
+PKG_CXXFLAGS += -O3 -march=native -mtune=native -fopenmp
+PKG_LIBS += -fopenmp
 
 # OpenMP flags (icx/icpx support -fopenmp and recommend -qopenmp in some contexts)
 #SHLIB_OPENMP_CFLAGS = -qopenmp -qopt-report # pour icx
