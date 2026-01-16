@@ -8,9 +8,9 @@ using namespace arma;
 #include <vector>
 #include <cmath>
 #include <numeric> // iota
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+// #ifdef _OPENMP
+// #include <omp.h>
+// #endif
 
  // --- Utilitaires ---
  // log-sum-exp pour stabilité numérique
