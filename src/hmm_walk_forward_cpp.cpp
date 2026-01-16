@@ -95,7 +95,12 @@ HMMModel train_hmm_em(const mat &X, int K, int maxit=200, double tol=1e-6, doubl
   for (int iter=0; iter<maxit; ++iter) {
     // E-step: compute emission_logprob[t,k] = log p(x_t | state=k)
     for (int k=0;k<K;k++) {
+      // parallelize over t OR parallelize outer k?
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
       for (int t=0;t<T;t++) {
+        // avoid creating vec x inside inner loop? we still need x each t
         vec x = X.row(t).t();
         emission_logprob(t,k) = log_mvnorm(x, mu.row(k).t(), Sigma_inv[k], logdet(k), D);
       }
