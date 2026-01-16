@@ -113,9 +113,9 @@ using namespace arma;
        const arma::mat &invK = Sigma_inv[k];
        double ldetk = logdet(k);
        // parallelize over t
-#ifdef _OPENMP
-#pragma omp parallel for private(x_buf)
-#endif
+// #ifdef _OPENMP
+// #pragma omp parallel for private(x_buf)
+// #endif
        for (int t=0;t<T;t++) {
          // fill x_buf without allocation
          for (int d=0; d<D; ++d) x_buf(d) = X(t,d);
@@ -271,9 +271,9 @@ using namespace arma;
 
    for (int t=1;t<T;t++) {
      // parallelize over j states (each j computes max over i)
-#ifdef _OPENMP
-#pragma omp parallel for private(tmp, x_buf)
-#endif
+// #ifdef _OPENMP
+// #pragma omp parallel for private(tmp, x_buf)
+// #endif
      for (int j=0;j<K;j++) {
        double best = -std::numeric_limits<double>::infinity();
        int best_i = 0;
