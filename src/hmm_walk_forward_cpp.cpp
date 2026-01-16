@@ -251,6 +251,9 @@ uvec viterbi_decode(const HMMModel &mdl, const mat &X) {
     psi(0,k) = 0;
   }
   for (int t=1;t<T;t++) {
+#ifdef _OPENMP
+#pragma omp parallel for
+#endif
     for (int j=0;j<K;j++) {
       vec tmp(K);
       for (int i=0;i<K;i++) tmp(i) = delta(t-1,i) + std::log(std::max(1e-300, mdl.A(i,j)));
