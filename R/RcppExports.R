@@ -6,64 +6,6 @@ calculate_rolling_support_resistance_fast <- function(dates, opens, highs, lows,
     .Call(`_hmmTradeR_calculate_rolling_support_resistance_fast`, dates, opens, highs, lows, closes, volumes, adjusted, window_size, width)
 }
 
-#' Entraînement HMM multivarié en walk-forward et génération de signaux
-#'
-#' Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
-#' décode les états avec l'algorithme de Viterbi et produit des signaux -1/0/1.
-#'
-#' Cette fonction est une interface Rcpp/C++ pour un usage embarqué dans un package R.
-#' Elle suppose que la première colonne de X_all contient les rendements (ret) utilisés
-#' pour scorer les états (les autres colonnes peuvent contenir ATR, RSI, etc.).
-#'
-#' @param X_all numeric matrix (T x D). Matrice de features alignée avec la série de prix.
-#'        Aucune valeur manquante autorisée. Première colonne : rendements (ret).
-#' @param nstates integer (>=1). Nombre d'états cachés K. Default: 2.
-#' @param n_bull integer. Nombre d'états considérés comme "bull". Default: 1.
-#' @param n_bear integer. Nombre d'états considérés comme "bear". Default: 1.
-#' @param mode_select character. Méthode de sélection des états: "mean", "mean_sd" ou "percentile".
-#'        Default: "mean".
-#' @param percentile_cut numeric (0..0.5). Seuil pour la sélection par percentile (si mode_select == "percentile").
-#'        Default: 0.2.
-#' @param seed integer. Seed de initialisation (affecte kmeans initial). Default: 123.
-#' @param training_frequency integer. Fréquence (en pas) entre ré-entrainements (taille de la fenêtre OOS).
-#'        Default: 21.
-#' @param initial_multiplier integer. Taille de la fenêtre initiale = initial_multiplier * training_frequency.
-#'        Default: 3.
-#' @param maxit integer. Nombre maximal d'itérations EM. Default: 200.
-#' @param tol numeric. Tolérance de convergence EM (relatif sur logLik). Default: 1e-6.
-#' @param verbose logical. Messages de progression si TRUE. Default: TRUE.
-#'
-#' @return A named list with elements:
-#'   \item{signals}{integer vector length T (-1: bear, 0: neutral, 1: bull)}'
-#'   \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}'
-#'   \item{diagnostics}{list of per-task diagnostics; each element contains state_means, state_sds,
-#'         bull_states, bear_states, train_end, predict_end, oos_counts}'
-#'
-#' @details
-#' - La fonction entraîne le HMM sur une fenêtre initiale, puis re-entraine périodiquement (walk-forward).
-#' - L'algorithme EM utilise une régularisation sur les covariances (cov_reg = 1e-6).
-#' - La sélection des états bull / bear privilégie les états observés dans la période out-of-sample.
-#' - La colonne 1 de X_all doit être les rendements utilisés pour scorer les états.
-#'
-#' @examples
-#' \dontrun{
-#' library(Rcpp)
-#' # Supposons que vous ayez un package 'votrePackage' et que la DLL soit chargée
-#' # Exemple synthétique : T x D matrix
-#' set.seed(1)
-#' T <- 200
-#' D <- 4
-#' X_all <- matrix(rnorm(T * D), ncol = D)
-#' # Appel direct (si la fonction est exportée dans votre package)
-#' res <- votrePackage::walk_forward_hmm_cpp(X_all, nstates = 3, training_frequency = 20, verbose = FALSE)
-#' str(res)
-#' }
-#'
-#' @references
-#' - Rabiner, L. (1989) A tutorial on Hidden Markov Models and selected applications in speech recognition.
-#' - Bishop, C. M. (2006) Pattern Recognition and Machine Learning (EM, GMM).
-#'
-#' @export
 walk_forward_hmm_cpp <- function(X_all, nstates = 2L, n_bull = 1L, n_bear = 1L, mode_select = "mean", percentile_cut = 0.2, seed = 123L, training_frequency = 21L, initial_multiplier = 3L, maxit = 200L, tol = 1e-6, verbose = TRUE) {
     .Call(`_hmmTradeR_walk_forward_hmm_cpp`, X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
 }
