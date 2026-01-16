@@ -1,10 +1,9 @@
 /* fichier: walk_forward_hmm_cpp.cpp */
 // Ajoutez la macro ARMA_USE_CURRENT
-// #define ARMA_USE_CURRENT
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
- using namespace Rcpp;
- using namespace arma;
+using namespace Rcpp;
+using namespace arma;
 #include <algorithm>
 #include <vector>
 #include <cmath>
