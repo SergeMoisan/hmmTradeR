@@ -35,8 +35,7 @@
 #' @examples
 #' \dontrun{
 #' # Exemple R (après compilation et installation du package)
-#' # supposez que le package s'appelle "YOURPKGNAME" et que la fonction est disponible.
-#' library(YOURPKGNAME) # remplacer par le nom réel du package
+#' library(hmmTradeR) # remplacer par le nom réel du package
 #' # données fictives
 #' dates <- as.character(Sys.Date() - 9:0)
 #' n <- length(dates)
@@ -98,14 +97,14 @@ calculate_rolling_support_resistance_fast <- function(dates, opens, highs, lows,
 #' @examples
 #' \dontrun{
 #' library(Rcpp)
-#' # Supposons que vous ayez un package 'votrePackage' et que la DLL soit chargée
+#' library(hmmTradeR)
 #' # Exemple synthétique : T x D matrix
 #' set.seed(1)
 #' T <- 200
 #' D <- 4
 #' X_all <- matrix(rnorm(T * D), ncol = D)
 #' # Appel direct (si la fonction est exportée dans votre package)
-#' res <- votrePackage::walk_forward_hmm_cpp(X_all, nstates = 3, training_frequency = 20, verbose = FALSE)
+#' res <- hmmTradeR::walk_forward_hmm_cpp(X_all, nstates = 3, training_frequency = 20, verbose = FALSE)
 #' str(res)
 #' }
 #'
