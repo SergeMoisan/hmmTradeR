@@ -322,6 +322,7 @@ double quantile_nth(const arma::vec & xv, double p) {
 //   training_frequency, initial_multiplier, seed
 // Output: List with signals (T ints -1/0/1), states (T ints 1..K or NA-coded 0), diagnostics per task
 // For numeric stability and reproducibility seed used to initialize random subset for kmeans
+//
 //' Entraînement HMM multivarié en walk-forward et génération de signaux
 //'
 //' Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
