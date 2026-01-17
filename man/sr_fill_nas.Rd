@@ -2,10 +2,7 @@
 % Please edit documentation in R/sr_fill_Nas.R
 \name{sr_fill_nas}
 \alias{sr_fill_nas}
-\title{Title sr_fill_nas
-Cette fonction remplit les éventuels NA présents dans un jeu de données
-de supports et résistances en utilisant la méthode Last Observation Carried Forward (LOCF).
-Cela permet de maintenir la continuité des niveaux critiques dans l'analyse technique.}
+\title{sr_fill_nas: remplit les Na de la première par des 0 puis utilise LOCF.}
 \usage{
 sr_fill_nas(sr_data)
 }
@@ -17,8 +14,7 @@ dont les NA seront remplis colonne par colonne.}
 Un objet du même type que \code{sr_data} avec les NA remplacés par la dernière valeur non manquante observée.
 }
 \description{
-Title sr_fill_nas
-Cette fonction remplit les éventuels NA présents dans un jeu de données
+Cette fonction remplit les éventuels NA présents dans un jeu de données.
 de supports et résistances en utilisant la méthode Last Observation Carried Forward (LOCF).
 Cela permet de maintenir la continuité des niveaux critiques dans l'analyse technique.
 }
