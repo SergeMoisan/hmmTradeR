@@ -37,8 +37,7 @@ using namespace Rcpp;
 //' @examples
 //' \dontrun{
 //' # Exemple R (après compilation et installation du package)
-//' # supposez que le package s'appelle "YOURPKGNAME" et que la fonction est disponible.
-//' library(YOURPKGNAME) # remplacer par le nom réel du package
+//' library(hmmTradeR) # remplacer par le nom réel du package
 //' # données fictives
 //' dates <- as.character(Sys.Date() - 9:0)
 //' n <- length(dates)
