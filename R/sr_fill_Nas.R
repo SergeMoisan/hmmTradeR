@@ -1,4 +1,4 @@
-#' sr_fill_nas: remplit les Na de la première par des 0 puis utilise LOCF.
+#' sr_fill_nas: remplit les Na de la première ligne par des 0 puis utilise LOCF.
 #'
 #' Cette fonction remplit les éventuels NA présents dans un jeu de données.
 #' de supports et résistances en utilisant la méthode Last Observation Carried Forward (LOCF).
