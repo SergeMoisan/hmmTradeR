@@ -52,10 +52,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// optimized_walk_forward_hmm_cpp
+List optimized_walk_forward_hmm_cpp(const arma::mat& X_all, IntegerVector nstates_cand, IntegerVector n_bull_cand, IntegerVector n_bear_cand, int training_frequency, int initial_multiplier, int seed, int maxit, double tol, double cov_reg, bool parallel, bool verbose);
+RcppExport SEXP _hmmTradeR_optimized_walk_forward_hmm_cpp(SEXP X_allSEXP, SEXP nstates_candSEXP, SEXP n_bull_candSEXP, SEXP n_bear_candSEXP, SEXP training_frequencySEXP, SEXP initial_multiplierSEXP, SEXP seedSEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP cov_regSEXP, SEXP parallelSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_all(X_allSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nstates_cand(nstates_candSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type n_bull_cand(n_bull_candSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type n_bear_cand(n_bear_candSEXP);
+    Rcpp::traits::input_parameter< int >::type training_frequency(training_frequencySEXP);
+    Rcpp::traits::input_parameter< int >::type initial_multiplier(initial_multiplierSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< int >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< double >::type cov_reg(cov_regSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimized_walk_forward_hmm_cpp(X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency, initial_multiplier, seed, maxit, tol, cov_reg, parallel, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 9},
     {"_hmmTradeR_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_walk_forward_hmm_cpp, 12},
+    {"_hmmTradeR_optimized_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_optimized_walk_forward_hmm_cpp, 12},
     {NULL, NULL, 0}
 };
 

@@ -117,3 +117,10 @@ walk_forward_hmm_cpp <- function(X_all, nstates = 2L, n_bull = 1L, n_bear = 1L, 
     .Call(`_hmmTradeR_walk_forward_hmm_cpp`, X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
 }
 
+#' Walk-forward HMM with hyperparameter grid search per task (Rcpp)
+NULL
+
+optimized_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency = 21L, initial_multiplier = 3L, seed = 123L, maxit = 200L, tol = 1e-6, cov_reg = 1e-6, parallel = TRUE, verbose = TRUE) {
+    .Call(`_hmmTradeR_optimized_walk_forward_hmm_cpp`, X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency, initial_multiplier, seed, maxit, tol, cov_reg, parallel, verbose)
+}
+
