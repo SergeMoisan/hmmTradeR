@@ -2,7 +2,7 @@
 % Please edit documentation in R/sr_fill_Nas.R
 \name{sr_fill_nas}
 \alias{sr_fill_nas}
-\title{sr_fill_nas: remplit les Na de la première par des 0 puis utilise LOCF.}
+\title{sr_fill_nas: remplit les Na de la première ligne par des 0 puis utilise LOCF.}
 \usage{
 sr_fill_nas(sr_data)
 }

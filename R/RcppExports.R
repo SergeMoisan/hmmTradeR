@@ -55,6 +55,30 @@ calculate_rolling_support_resistance_fast <- function(dates, opens, highs, lows,
     .Call(`_hmmTradeR_calculate_rolling_support_resistance_fast`, dates, opens, highs, lows, closes, volumes, adjusted, window_size, width)
 }
 
+#' Walk-forward HMM with hyperparameter grid search per task (Rcpp)
+#'
+#' Train HMMs on rolling windows and for each retrain step search over provided
+#' hyperparameter combinations (nstates_cand x n_bull_cand x n_bear_cand) and select
+#' the best according to the "expected OOS return" metric (mean(ret|bull) - mean(ret|bear)).
+#'
+#' @param X_all numeric matrix (T x D), first column must be returns used for scoring
+#' @param nstates_cand integer vector of candidate states (e.g. c(2,3,4))
+#' @param n_bull_cand integer vector of candidate number of bull states (e.g. c(1,2))
+#' @param n_bear_cand integer vector of candidate number of bear states
+#' @param training_frequency integer (retrain frequency). Default 21.
+#' @param initial_multiplier integer (initial window = multiplier * training_frequency). Default 3.
+#' @param seed integer base seed. Default 123.
+#' @param maxit EM maxit. Default 200.
+#' @param tol EM tol. Default 1e-6.
+#' @param cov_reg covariance regularization. Default 1e-6.
+#' @param parallel bool run grid training per task in parallel using OpenMP (default TRUE).
+#' @param verbose bool messages. Default TRUE.
+#' @return List with signals, states, diagnostics
+#' @export
+optimize_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency = 21L, initial_multiplier = 3L, seed = 123L, maxit = 200L, tol = 1e-6, cov_reg = 1e-6, parallel = TRUE, verbose = TRUE) {
+    .Call(`_hmmTradeR_optimize_walk_forward_hmm_cpp`, X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency, initial_multiplier, seed, maxit, tol, cov_reg, parallel, verbose)
+}
+
 #' Entraînement HMM multivarié en walk-forward et génération de signaux
 #'
 #' Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
@@ -115,12 +139,5 @@ calculate_rolling_support_resistance_fast <- function(dates, opens, highs, lows,
 #' @export
 walk_forward_hmm_cpp <- function(X_all, nstates = 2L, n_bull = 1L, n_bear = 1L, mode_select = "mean", percentile_cut = 0.2, seed = 123L, training_frequency = 21L, initial_multiplier = 3L, maxit = 200L, tol = 1e-6, verbose = TRUE) {
     .Call(`_hmmTradeR_walk_forward_hmm_cpp`, X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
-}
-
-#' Walk-forward HMM with hyperparameter grid search per task (Rcpp)
-NULL
-
-optimized_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency = 21L, initial_multiplier = 3L, seed = 123L, maxit = 200L, tol = 1e-6, cov_reg = 1e-6, parallel = TRUE, verbose = TRUE) {
-    .Call(`_hmmTradeR_optimized_walk_forward_hmm_cpp`, X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency, initial_multiplier, seed, maxit, tol, cov_reg, parallel, verbose)
 }
 
