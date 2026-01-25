@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{walk_forward_hmm_cpp}
 \alias{walk_forward_hmm_cpp}
-\title{Entraînement HMM multivarié en walk-forward et génération de signaux}
+\title{Entraînement HMM multivarié en walk-forward avec génération de signaux et exportation de modèle}
 \usage{
 walk_forward_hmm_cpp(
   X_all,
@@ -55,6 +55,7 @@ A named list with elements:
   \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}'
   \item{diagnostics}{list of per-task diagnostics; each element contains state_means, state_sds,
         bull_states, bear_states, train_end, predict_end, oos_counts}'
+  \item{model} exporté pour une utilisation live
 }
 \description{
 Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,

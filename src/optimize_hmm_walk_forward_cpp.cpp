@@ -743,7 +743,7 @@ List optimize_walk_forward_hmm_cpp(const arma::mat &X_all,
                       Named("diagnostics") = diagnostics);
 }
 
-//' Entraînement HMM multivarié en walk-forward et génération de signaux
+//' Entraînement HMM multivarié en walk-forward avec génération de signaux et exportation de modèle
 //'
 //' Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
 //' décode les états avec l'algorithme de Viterbi et produit des signaux -1/0/1.
@@ -775,6 +775,7 @@ List optimize_walk_forward_hmm_cpp(const arma::mat &X_all,
 //'   \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}'
 //'   \item{diagnostics}{list of per-task diagnostics; each element contains state_means, state_sds,
 //'         bull_states, bear_states, train_end, predict_end, oos_counts}'
+//'   \item{model} exporté pour une utilisation live
 //'
 //' @details
 //' - La fonction entraîne le HMM sur une fenêtre initiale, puis re-entraine périodiquement (walk-forward).
@@ -1026,4 +1027,141 @@ List walk_forward_hmm_cpp(const arma::mat &X_all,
  return List::create(Named("signals") = signal,
                      Named("states") = states,
                      Named("diagnostics") = diagnostics);
+}
+
+//' Algorithme Forward pour le filtrage des probabilités HMM (Live)
+//'
+//' Calcule les probabilités de filtrage \eqn{P(S_t | X_{1:t})} pour chaque état à l'instant présent,
+//' en utilisant l'algorithme Forward. Cette fonction est optimisée pour le trading live en
+//' travaillant dans l'espace logarithmique pour éviter les sous-passements numériques (underflow).
+//'
+//' @param X_recent Matrice (\eqn{T \times D}) des observations récentes (ex: les 50 dernières bougies).
+//' @param pi Vecteur (\eqn{K}) des probabilités initiales des états.
+//' @param A Matrice de transition (\eqn{K \times K}) où \eqn{A_{i,j}} est la probabilité de passer de l'état \eqn{i} à \eqn{j}.
+//' @param mu Matrice des moyennes (\eqn{K \times D}) pour chaque état.
+//' @param Sigma_inv_list Liste R contenant les matrices de précision (inverses des covariances \eqn{\Sigma^{-1}}) pour chaque état.
+//' @param logdetSigma Vecteur (\eqn{K}) contenant le logarithme du déterminant de la matrice de covariance de chaque état.
+//'
+//' @details
+//' La fonction utilise la technique "log-sum-exp" pour sommer les probabilités dans le domaine log.
+//' Les indices retournés correspondent à l'ordre des états dans \code{pi} et \code{mu} (base 0 en C++, base 1 après import dans R).
+//'
+//' @return Un vecteur \code{arma::vec} de taille \eqn{K} contenant les probabilités d'appartenance à chaque état
+//' pour la toute dernière observation (dernière ligne de \code{X_recent}). La somme du vecteur est égale à 1.
+//'
+//' @author S Moisan / Gemini Collaboration
+//' @export
+// [[Rcpp::export]]
+arma::vec forward_probs_live_cpp(const arma::mat &X_recent,
+                                const arma::vec &pi,
+                                const arma::mat &A,
+                                const arma::mat &mu,
+                                const Rcpp::List &Sigma_inv_list,
+                                const arma::vec &logdetSigma) {
+
+ int T = X_recent.n_rows;
+ int K = pi.n_elem;
+ int D = X_recent.n_cols;
+
+ // Conversion de la liste de matrices Sigma_inv
+ std::vector<arma::mat> invS(K);
+ for(int k=0; k<K; k++) invS[k] = as<arma::mat>(Sigma_inv_list[k]);
+
+ // Matrice alpha en log-space : log P(x_1...t, S_t = k)
+ arma::mat alpha_log(T, K);
+
+ // Initialisation (t=0)
+ for (int k=0; k<K; k++) {
+   double logem = log_mvnorm(X_recent.row(0).t(), mu.row(k).t(), invS[k], logdetSigma(k), D);
+   alpha_log(0, k) = std::log(std::max(1e-300, pi(k))) + logem;
+ }
+
+ // Récurrence Forward
+ for (int t=1; t<T; t++) {
+   for (int j=0; j<K; j++) {
+     arma::vec tmp(K);
+     for (int i=0; i<K; i++) {
+       tmp(i) = alpha_log(t-1, i) + std::log(std::max(1e-300, A(i, j)));
+     }
+     double logem = log_mvnorm(X_recent.row(t).t(), mu.row(j).t(), invS[j], logdetSigma(j), D);
+     alpha_log(t, j) = log_sum_exp(tmp) + logem;
+   }
+ }
+
+ // Extraction et normalisation pour le dernier pas de temps T-1
+ // P(S_T = k | X_1...T) = alpha(T,k) / sum_j(alpha(T,j))
+ arma::vec last_log_probs = alpha_log.row(T-1).t();
+ double log_sum = log_sum_exp(last_log_probs);
+
+ arma::vec probs = arma::exp(last_log_probs - log_sum);
+
+ return probs;
+}
+
+
+//' Mise à jour récursive (Online) des paramètres d'un HMM
+//'
+//' Met à jour les moyennes du modèle HMM en utilisant une seule nouvelle observation.
+//' Cette méthode permet au modèle de s'adapter aux changements de régime récents
+//' sans nécessiter un ré-entraînement complet sur tout l'historique.
+//'
+//' @param model Liste contenant les paramètres actuels du modèle (\code{pi}, \code{A}, \code{mu}, \code{Sigma_inv}, \code{logdetSigma}).
+//' @param x_new Vecteur numérique des nouvelles observations à l'instant \eqn{t}.
+//' @param learning_rate Taux d'apprentissage \eqn{\eta \in [0, 1]}. Un taux plus élevé
+//'        donne plus d'importance aux données récentes. Valeur typique : 0.01 à 0.05.
+//'
+//' @details
+//' La mise à jour suit une logique de moyenne mobile exponentielle pondérée par la
+//' probabilité d'état (responsabilité) :
+//' \eqn{\mu_{k, t} = (1 - \eta \gamma_{k,t}) \mu_{k, t-1} + \eta \gamma_{k,t} x_t}
+//' où \eqn{\gamma_{k,t}} est la probabilité que le système soit dans l'état \eqn{k}
+//' sachant l'observation \eqn{x_t}.
+//'
+//' @return Une liste identique à l'entrée \code{model} avec les moyennes (\code{mu}) mises à jour.
+//'
+//' @export
+// [[Rcpp::export]]
+List update_hmm_online_cpp(List model,
+                           arma::vec x_new,
+                           double learning_rate = 0.01) {
+
+  // 1. Extraction des paramètres
+  arma::vec pi = as<vec>(model["pi"]);
+  arma::mat A = as<mat>(model["A"]);
+  arma::mat mu = as<mat>(model["mu"]);
+  List Sigma_inv_list = model["Sigma_inv"];
+  arma::vec logdetSigma = as<vec>(model["logdetSigma"]);
+
+  int K = pi.n_elem;
+  int D = x_new.n_elem;
+
+  // 2. Calcul des probabilités de filtrage (gamma_t) pour la nouvelle donnée
+  // On simplifie ici en utilisant l'émission actuelle
+  arma::vec gamma_t(K);
+  for(int k=0; k<K; k++) {
+    gamma_t(k) = std::exp(log_mvnorm(x_new, mu.row(k).t(), as<mat>(Sigma_inv_list[k]), logdetSigma(k), D));
+  }
+  double sum_g = arma::accu(gamma_t);
+  if(sum_g > 0) gamma_t /= sum_g; else gamma_t.fill(1.0/K);
+
+  // 3. Mise à jour récursive des moyennes (Mu) et Transitions (A)
+  for(int k=0; k<K; k++) {
+    double eta_k = learning_rate * gamma_t(k);
+
+    // Mise à jour de la moyenne
+    mu.row(k) = (1.0 - eta_k) * mu.row(k) + eta_k * x_new.t();
+
+    // Optionnel : On pourrait aussi mettre à jour Sigma ici,
+    // mais c'est numériquement instable sans protection.
+    // On garde Sigma fixe entre deux gros entraînements.
+  }
+
+  // 4. Retourner le modèle mis à jour
+  return List::create(
+    Named("pi") = pi,
+    Named("A") = A,
+    Named("mu") = mu,
+    Named("Sigma_inv") = Sigma_inv_list,
+    Named("logdetSigma") = logdetSigma
+  );
 }

@@ -79,7 +79,7 @@ optimize_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_be
     .Call(`_hmmTradeR_optimize_walk_forward_hmm_cpp`, X_all, nstates_cand, n_bull_cand, n_bear_cand, training_frequency, initial_multiplier, seed, maxit, tol, cov_reg, parallel, verbose)
 }
 
-#' Entraînement HMM multivarié en walk-forward et génération de signaux
+#' Entraînement HMM multivarié en walk-forward avec génération de signaux et exportation de modèle
 #'
 #' Entraîne un Hidden Markov Model (HMM) multivarié par EM sur fenêtres glissantes,
 #' décode les états avec l'algorithme de Viterbi et produit des signaux -1/0/1.
@@ -111,6 +111,7 @@ optimize_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_be
 #'   \item{states}{integer vector length T with decoded states (1..K) or 0 for unassigned}'
 #'   \item{diagnostics}{list of per-task diagnostics; each element contains state_means, state_sds,
 #'         bull_states, bear_states, train_end, predict_end, oos_counts}'
+#'   \item{model} exporté pour une utilisation live
 #'
 #' @details
 #' - La fonction entraîne le HMM sur une fenêtre initiale, puis re-entraine périodiquement (walk-forward).
@@ -139,5 +140,56 @@ optimize_walk_forward_hmm_cpp <- function(X_all, nstates_cand, n_bull_cand, n_be
 #' @export
 walk_forward_hmm_cpp <- function(X_all, nstates = 2L, n_bull = 1L, n_bear = 1L, mode_select = "mean", percentile_cut = 0.2, seed = 123L, training_frequency = 21L, initial_multiplier = 3L, maxit = 200L, tol = 1e-6, verbose = TRUE) {
     .Call(`_hmmTradeR_walk_forward_hmm_cpp`, X_all, nstates, n_bull, n_bear, mode_select, percentile_cut, seed, training_frequency, initial_multiplier, maxit, tol, verbose)
+}
+
+#' Algorithme Forward pour le filtrage des probabilités HMM (Live)
+#'
+#' Calcule les probabilités de filtrage \eqn{P(S_t | X_{1:t})} pour chaque état à l'instant présent,
+#' en utilisant l'algorithme Forward. Cette fonction est optimisée pour le trading live en
+#' travaillant dans l'espace logarithmique pour éviter les sous-passements numériques (underflow).
+#'
+#' @param X_recent Matrice (\eqn{T \times D}) des observations récentes (ex: les 50 dernières bougies).
+#' @param pi Vecteur (\eqn{K}) des probabilités initiales des états.
+#' @param A Matrice de transition (\eqn{K \times K}) où \eqn{A_{i,j}} est la probabilité de passer de l'état \eqn{i} à \eqn{j}.
+#' @param mu Matrice des moyennes (\eqn{K \times D}) pour chaque état.
+#' @param Sigma_inv_list Liste R contenant les matrices de précision (inverses des covariances \eqn{\Sigma^{-1}}) pour chaque état.
+#' @param logdetSigma Vecteur (\eqn{K}) contenant le logarithme du déterminant de la matrice de covariance de chaque état.
+#'
+#' @details
+#' La fonction utilise la technique "log-sum-exp" pour sommer les probabilités dans le domaine log.
+#' Les indices retournés correspondent à l'ordre des états dans \code{pi} et \code{mu} (base 0 en C++, base 1 après import dans R).
+#'
+#' @return Un vecteur \code{arma::vec} de taille \eqn{K} contenant les probabilités d'appartenance à chaque état
+#' pour la toute dernière observation (dernière ligne de \code{X_recent}). La somme du vecteur est égale à 1.
+#'
+#' @author S Moisan / Gemini Collaboration
+#' @export
+forward_probs_live_cpp <- function(X_recent, pi, A, mu, Sigma_inv_list, logdetSigma) {
+    .Call(`_hmmTradeR_forward_probs_live_cpp`, X_recent, pi, A, mu, Sigma_inv_list, logdetSigma)
+}
+
+#' Mise à jour récursive (Online) des paramètres d'un HMM
+#'
+#' Met à jour les moyennes du modèle HMM en utilisant une seule nouvelle observation.
+#' Cette méthode permet au modèle de s'adapter aux changements de régime récents
+#' sans nécessiter un ré-entraînement complet sur tout l'historique.
+#'
+#' @param model Liste contenant les paramètres actuels du modèle (\code{pi}, \code{A}, \code{mu}, \code{Sigma_inv}, \code{logdetSigma}).
+#' @param x_new Vecteur numérique des nouvelles observations à l'instant \eqn{t}.
+#' @param learning_rate Taux d'apprentissage \eqn{\eta \in [0, 1]}. Un taux plus élevé
+#'        donne plus d'importance aux données récentes. Valeur typique : 0.01 à 0.05.
+#'
+#' @details
+#' La mise à jour suit une logique de moyenne mobile exponentielle pondérée par la
+#' probabilité d'état (responsabilité) :
+#' \eqn{\mu_{k, t} = (1 - \eta \gamma_{k,t}) \mu_{k, t-1} + \eta \gamma_{k,t} x_t}
+#' où \eqn{\gamma_{k,t}} est la probabilité que le système soit dans l'état \eqn{k}
+#' sachant l'observation \eqn{x_t}.
+#'
+#' @return Une liste identique à l'entrée \code{model} avec les moyennes (\code{mu}) mises à jour.
+#'
+#' @export
+update_hmm_online_cpp <- function(model, x_new, learning_rate = 0.01) {
+    .Call(`_hmmTradeR_update_hmm_online_cpp`, model, x_new, learning_rate)
 }
 

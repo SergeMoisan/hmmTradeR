@@ -74,11 +74,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// forward_probs_live_cpp
+arma::vec forward_probs_live_cpp(const arma::mat& X_recent, const arma::vec& pi, const arma::mat& A, const arma::mat& mu, const Rcpp::List& Sigma_inv_list, const arma::vec& logdetSigma);
+RcppExport SEXP _hmmTradeR_forward_probs_live_cpp(SEXP X_recentSEXP, SEXP piSEXP, SEXP ASEXP, SEXP muSEXP, SEXP Sigma_inv_listSEXP, SEXP logdetSigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_recent(X_recentSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type pi(piSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type Sigma_inv_list(Sigma_inv_listSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type logdetSigma(logdetSigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(forward_probs_live_cpp(X_recent, pi, A, mu, Sigma_inv_list, logdetSigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// update_hmm_online_cpp
+List update_hmm_online_cpp(List model, arma::vec x_new, double learning_rate);
+RcppExport SEXP _hmmTradeR_update_hmm_online_cpp(SEXP modelSEXP, SEXP x_newSEXP, SEXP learning_rateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type x_new(x_newSEXP);
+    Rcpp::traits::input_parameter< double >::type learning_rate(learning_rateSEXP);
+    rcpp_result_gen = Rcpp::wrap(update_hmm_online_cpp(model, x_new, learning_rate));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hmmTradeR_calculate_rolling_support_resistance_fast", (DL_FUNC) &_hmmTradeR_calculate_rolling_support_resistance_fast, 9},
     {"_hmmTradeR_optimize_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_optimize_walk_forward_hmm_cpp, 12},
     {"_hmmTradeR_walk_forward_hmm_cpp", (DL_FUNC) &_hmmTradeR_walk_forward_hmm_cpp, 12},
+    {"_hmmTradeR_forward_probs_live_cpp", (DL_FUNC) &_hmmTradeR_forward_probs_live_cpp, 6},
+    {"_hmmTradeR_update_hmm_online_cpp", (DL_FUNC) &_hmmTradeR_update_hmm_online_cpp, 3},
     {NULL, NULL, 0}
 };
 
