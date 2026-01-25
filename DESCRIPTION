@@ -1,31 +1,29 @@
 Package: hmmTradeR
 Type: Package
-Title: hmm models tools for trading
+Title: Hidden Markov Model Tools for Quantitative Trading
 Version: 0.1.0
-Authors@R: c(
-    person(
-      "Serge", "Moisan",
-      email = "serge.moisan@yahoo.fr",
-      role = c("aut", "cre")
-    )
-  )
-Description: This package proposes different tools,
-    written in C++ (for speed)and R to test different parameters 
-    for hmm model of stock prices. It generates signals for backtesting and
-    evaluation of the different models.
+Authors@R: 
+    person("Serge", "Moisan",
+           email = "serge.moisan@yahoo.fr",
+           role = c("aut", "cre"))
+Description: Provides high-performance tools for Hidden Markov Models (HMM) 
+    applied to financial time series. The package implements EM algorithms, 
+    Viterbi decoding, and Forward filtering in C++ for maximum speed. 
+    Includes backtesting frameworks, online learning capabilities, 
+    and risk management modules specifically designed for stock price modeling.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 LinkingTo: 
-    cpp11,
-    RcppArmadillo,
-    Rcpp
+    Rcpp,
+    RcppArmadillo
 Imports: 
     Rcpp,
-    RcppArmadillo,
-    zoo
+    zoo,
+    methods,
+    IBrokers
 Suggests: 
-    decor,
     roxygen2,
-    devtools
+    devtools,
+    testthat
 RoxygenNote: 7.3.3
