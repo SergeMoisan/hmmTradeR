@@ -875,7 +875,6 @@ List walk_forward_hmm_cpp(const arma::mat &X_all,
      }
    }
 
-   // --- Robust selection patch starts here ---
    // Order states by score descending (handle NA by sending to end)
    std::vector<int> ord_states(nstates);
    iota(ord_states.begin(), ord_states.end(), 1); // 1..K
@@ -980,9 +979,31 @@ List walk_forward_hmm_cpp(const arma::mat &X_all,
      else signal(t) = 0;
      states(t) = st;
    }
+   // On convertit std::vector<mat> en List pour R
+   List Sigma_inv_list(nstates);
+   for(int k=0; k<nstates; k++) {
+     Sigma_inv_list[k] = model.Sigma_inv[k];
+   }
 
+   List model_params = List::create(
+     Named("pi") = model.pi,
+     Named("A") = model.A,
+     Named("mu") = model.mu,
+     Named("Sigma_inv") = Sigma_inv_list,
+     Named("logdetSigma") = model.logdetSigma
+   );
+
+   // Assignation des signaux OOS
+   for (int t=train_end; t<predict_end; ++t) {
+     int st = (int)states_all(t);
+     if (std::find(bull_states.begin(), bull_states.end(), st) != bull_states.end()) signal(t) = 1;
+     else if (std::find(bear_states.begin(), bear_states.end(), st) != bear_states.end()) signal(t) = -1;
+     else signal(t) = 0;
+     states(t) = st;
+   }
    // diagnostics
-   List diag = List::create(Named("state_means") = state_means,
+   List diag = List::create(Named("model") = model_params, // Paramètres pour predict_live
+                            Named("state_means") = state_means,
                             Named("state_sds") = state_sds,
                             Named("bull_states") = wrap(bull_states),
                             Named("bear_states") = wrap(bear_states),
